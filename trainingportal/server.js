@@ -206,9 +206,12 @@ app.get("/public/badge/:code",async(req,res) => {
   }
     
   let imgSrc = `${config.dojoUrl}/public/badge/${encodeURIComponent(code)}/image.png`
+  //solve the Reflected cross-site scripting vulnerability
   let html = badgeHtml;
-  html = html.replace(/BADGE_IMG_SRC/g, imgSrc);
-  html = html.replace(/BADGE_URL/g, config.dojoUrl+req.url);
+  const sanitizedImgSrc = escapeHtml(imgSrc);
+  const sanitizedUrl = escapeHtml(config.dojoUrl + req.url);
+  html = html.replace(/BADGE_IMG_SRC/g, sanitizedImgSrc);
+  html = html.replace(/BADGE_URL/g, sanitizedUrl);
   res.send(html);
 });
 
